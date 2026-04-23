@@ -1,17 +1,27 @@
-# Equitable Dinners Platform — Email Manual
+# Equitable Dinners Platform Manual
 
-Practical reference for editing the emails the Equitable Dinners platform sends automatically.
+A growing reference for managing the ED platform day-to-day. Written for OOH staff — no code knowledge required.
 
-**Read online:** https://yemane-labs.github.io/ed-manual/
+**📖 Read online:** https://yemane-labs.github.io/ed-manual/
 
-## For the ED / Out of Hand Theater team
+## Structure
 
-You shouldn't need to touch anything here directly. Open the URL above and use the manual as a reference when editing email templates, topics, or conversations in the platform.
+- `src/<category>/*.md` — editable source markdown files
+- `build.py` — generates `index.html` from `src/`
+- `index.html` — rendered output (what GitHub Pages serves)
 
-## For the devs
+## Adding new content
 
-- `index.html` — self-contained rendered manual (what GitHub Pages serves)
-- `src/*.md` — editable source markdown. Changes here need to be re-rendered into `index.html`.
-- To request a change to an email, create a task in Asana (Inclusivv Platform Transition & Maintenance project) assigned to the devs.
+1. Create a new category folder under `src/` (e.g. `src/topics/`)
+2. Drop numbered markdown files into it (e.g. `01-creating-a-topic.md`)
+3. Register the category in `build.py` (uncomment a line in `CATEGORIES`)
+4. Run: `python3 build.py`
+5. Commit & push — GitHub Pages rebuilds automatically
 
-Maintained by Aki & Dino.
+## Requesting changes (for OOH staff)
+
+Create a task in Asana (Inclusivv Platform Transition & Maintenance project) and assign it to the devs.
+
+## Maintained by
+
+Aki & Dino (Yemane Labs).
