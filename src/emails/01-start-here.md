@@ -1,12 +1,6 @@
-# Equitable Dinners Platform — Email Manual
+# Start Here
 
-**For:** Ashley + anyone at OOH managing email content
-**Maintained by:** Aki & Dino (the devs)
-**Last updated:** 2026-04-22
-
----
-
-## What this is
+Entry point for the Emails section of this manual.
 
 A practical guide to every email the platform sends automatically — when it goes out, who gets it, and exactly where you can edit it. No code knowledge required.
 
