@@ -30,6 +30,8 @@
   ul, ol { padding-left: 22px; }
   li { margin: 4px 0; }
   .footer-note { margin-top: 60px; padding: 20px; background: #fff; border-radius: 8px; color: #888; font-size: 13px; text-align: center; }
+  .dim { opacity: 0.45; transition: opacity 0.15s; }
+  .dim:hover { opacity: 0.75; }
 </style>
 </head><body>
 <div class="layout">
@@ -57,6 +59,17 @@ function render(key) {
   document.querySelectorAll('aside nav a').forEach(a => a.classList.toggle('active', a.dataset.doc === key));
   const md = DOCS[key] || '# Not found\n\nThat section does not exist yet.';
   document.getElementById('doc').innerHTML = marked.parse(md);
+  // Dim any section whose heading says "(coming soon)"
+  document.querySelectorAll('#doc h1, #doc h2, #doc h3, #doc h4').forEach(h => {
+    if (/coming soon/i.test(h.textContent)) {
+      h.classList.add('dim');
+      let sib = h.nextElementSibling;
+      while (sib && !/^H[1-4]$/.test(sib.tagName)) {
+        sib.classList.add('dim');
+        sib = sib.nextElementSibling;
+      }
+    }
+  });
   window.scrollTo(0, 0);
   history.replaceState(null, '', '#' + key.replace(/\//g, '-'));
 }
