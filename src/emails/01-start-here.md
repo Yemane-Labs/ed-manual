@@ -19,11 +19,11 @@ These are where 95%+ of the platform's email volume goes. Start here.
 
 | # | Template | When it sends | Relative volume |
 |---:|---|---|---|
-| 1 | [Attendee Confirmation](./01-attendee-confirmation.md) | Every RSVP | **High** — one per signup per conversation |
-| 2 | [Welcome New Account](./02-welcome-new-account.md) | Every new signup | **High** — one per new user |
-| 3 | [Conversation Notifications](./03-convo-notifications.md) | Pre-event and post-event reminders | **High** — up to 7 per guest per conversation (reminders, follow-ups) |
-| 4 | [NPS / Feedback Survey](./04-nps-feedback.md) | After each conversation | **Medium** — one per guest + one per host per conversation |
-| 5 | [Default (catch-all)](./05-default-catchall.md) | 20+ other low-volume emails | **Varies** — rarely sent individually but collectively significant |
+| 1 | [Attendee Confirmation](#emails-attendee-confirmation) | Every RSVP | **High** — one per signup per conversation |
+| 2 | [Welcome New Account](#emails-welcome-new-account) | Every new signup | **High** — one per new user |
+| 3 | [Conversation Notifications](#emails-convo-notifications) | Pre-event and post-event reminders | **High** — up to 7 per guest per conversation (reminders, follow-ups) |
+| 4 | [NPS / Feedback Survey](#emails-nps-feedback) | After each conversation | **Medium** — one per guest + one per host per conversation |
+| 5 | [Default (catch-all)](#emails-default-catchall) | 20+ other low-volume emails | **Varies** — rarely sent individually but collectively significant |
 
 *Actual send volume varies — the platform's pace depends on how many conversations you're running. As of April 2026 the platform sends roughly 100-200 emails per month across all templates.*
 

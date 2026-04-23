@@ -132,6 +132,7 @@ def render_html(docs, sidebar) -> str:
   .footer-note {{ margin-top: 60px; padding: 20px; background: #fff; border-radius: 8px; color: #888; font-size: 13px; text-align: center; }}
   .dim {{ opacity: 0.45; transition: opacity 0.15s; }}
   .dim:hover {{ opacity: 0.75; }}
+  a.broken {{ color: #c03; text-decoration: line-through wavy; cursor: help; }}
 </style>
 </head><body>
 <div class="layout">
@@ -148,6 +149,44 @@ def render_html(docs, sidebar) -> str:
 </div>
 <script>
 const DOCS = {docs_json};
+// Convert a URL hash like "#emails-attendee-confirmation" back into a doc key
+// like "emails/attendee-confirmation". The first hyphen separates the
+// category from the slug; subsequent hyphens stay in the slug.
+function hashToKey(hash) {{
+  const h = hash.replace(/^#/, '');
+  if (!h) return null;
+  const i = h.indexOf('-');
+  if (i < 0) return h;
+  return h.slice(0, i) + '/' + h.slice(i + 1);
+}}
+
+// Resolve an internal link (hash fragment, relative .md path, etc.) to a
+// doc key. Returns null if we can't map it to anything real.
+function linkToKey(href) {{
+  if (!href) return null;
+
+  // Plain hash anchors: #emails-attendee-confirmation
+  if (href.startsWith('#')) {{
+    const key = hashToKey(href);
+    return DOCS[key] ? key : null;
+  }}
+
+  // Relative markdown paths: try to map filename -> slug
+  // Examples: "./01-attendee-confirmation.md", "emails/02-welcome.md", "foo.md"
+  const mdMatch = href.match(/(?:([\\w-]+)\\/)?(?:\\d+-)?([\\w-]+)\\.md(?:#|$)/);
+  if (mdMatch) {{
+    const cat = mdMatch[1];
+    const slug = mdMatch[2];
+    // Try with explicit category first, then probe every category
+    if (cat && DOCS[cat + '/' + slug]) return cat + '/' + slug;
+    for (const k of Object.keys(DOCS)) {{
+      if (k.endsWith('/' + slug)) return k;
+    }}
+  }}
+
+  return null;
+}}
+
 function render(key) {{
   document.querySelectorAll('aside nav a').forEach(a => a.classList.toggle('active', a.dataset.doc === key));
   const md = DOCS[key] || '# Not found\\n\\nThat section does not exist yet.';
@@ -163,12 +202,55 @@ function render(key) {{
       }}
     }}
   }});
+  // Rewrite any in-content links to external URLs with target=_blank,
+  // and flag obviously broken ones so they don't silently 404
+  document.querySelectorAll('#doc a[href]').forEach(a => {{
+    const href = a.getAttribute('href');
+    const resolved = linkToKey(href);
+    if (resolved) {{
+      // Internal — will be intercepted on click
+      a.setAttribute('href', '#' + resolved.replace('/', '-'));
+    }} else if (/^https?:/.test(href)) {{
+      // External — open in new tab
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener');
+    }} else if (href.endsWith('.md') || href.startsWith('#')) {{
+      // Internal-looking but unresolvable — mark it visually
+      a.classList.add('broken');
+      a.setAttribute('title', 'Link target not found: ' + href);
+    }}
+  }});
   window.scrollTo(0, 0);
-  history.replaceState(null, '', '#' + key.replace(/\\//g, '-'));
+  if (location.hash !== '#' + key.replace('/', '-')) {{
+    history.replaceState(null, '', '#' + key.replace('/', '-'));
+  }}
 }}
-document.querySelectorAll('aside nav a').forEach(a => a.addEventListener('click', () => render(a.dataset.doc)));
-const initialHash = location.hash.slice(1).replace('-', '/');
-render((initialHash && DOCS[initialHash]) ? initialHash : '{first_doc}');
+
+// Sidebar nav clicks
+document.querySelectorAll('aside nav a').forEach(a =>
+  a.addEventListener('click', () => render(a.dataset.doc))
+);
+
+// Intercept in-content link clicks so internal links route without hitting the server
+document.getElementById('doc').addEventListener('click', e => {{
+  const link = e.target.closest('a');
+  if (!link) return;
+  const href = link.getAttribute('href') || '';
+  const key = linkToKey(href);
+  if (key) {{
+    e.preventDefault();
+    render(key);
+  }}
+}});
+
+// Also handle back/forward browser navigation
+window.addEventListener('hashchange', () => {{
+  const key = hashToKey(location.hash);
+  if (key && DOCS[key]) render(key);
+}});
+
+const initialKey = hashToKey(location.hash);
+render((initialKey && DOCS[initialKey]) ? initialKey : '{first_doc}');
 </script>
 </body></html>"""
 
